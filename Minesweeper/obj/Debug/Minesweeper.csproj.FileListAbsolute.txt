@@ -1,0 +1,7 @@
+C:\Users\marek\source\repos\Minesweeper\Minesweeper\bin\Debug\Minesweeper.exe.config
+C:\Users\marek\source\repos\Minesweeper\Minesweeper\bin\Debug\Minesweeper.exe
+C:\Users\marek\source\repos\Minesweeper\Minesweeper\bin\Debug\Minesweeper.pdb
+C:\Users\marek\source\repos\Minesweeper\Minesweeper\obj\Debug\Minesweeper.csproj.AssemblyReference.cache
+C:\Users\marek\source\repos\Minesweeper\Minesweeper\obj\Debug\Minesweeper.csproj.CoreCompileInputs.cache
+C:\Users\marek\source\repos\Minesweeper\Minesweeper\obj\Debug\Minesweeper.exe
+C:\Users\marek\source\repos\Minesweeper\Minesweeper\obj\Debug\Minesweeper.pdb
