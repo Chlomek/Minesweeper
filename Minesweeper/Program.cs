@@ -262,33 +262,17 @@ namespace Minesweeper
         }
         static void revealZeros(int x, int y, int[,] board, int size, int[,] playBoard)
         {
-            int i = 0;
-            while (i < 15)
-            {
-                int x1 = x - 1;
-                int y1 = y - 1;
-                int x2 = x + 1;
-                int y2 = y + 1;
-                int[] checkNext = { x, y };
+            int[] checkNext = new int[10];
+            checkNext[0] = x;
+            checkNext[1] = y;
 
-                
-                if (checkNext[0] != x || checkNext[1] != y)
+            for (int i = 0; i < 10; i+=2)
+            {
+                if (i != 0)
                 {
-                    x = checkNext[0];
-                    y = checkNext[1];
-                    ChainZeros(board, x, y, playBoard, size);
+                    x = checkNext[i];
+                    y = checkNext[i + 1];
                 }
-                else
-                    break;
-                i++;
-            }
-        }
-        static void ChainZeros(int[,] board, int x, int y, int[,] playBoard, int size)
-        {
-            int[] checkNext = { x, y };
-
-            for (int i = 0; i < board.GetLength(0); i++)
-            {
                 
                 int x1 = x - 1;
                 int y1 = y - 1;
@@ -300,8 +284,11 @@ namespace Minesweeper
                     if (board[x1, y1] == 0)
                     {
                         playBoard[x1, y1] = 0;
-                        checkNext[0] = x1;
-                        checkNext[1] = y1;
+                        if (i == 0)
+                        {
+                            checkNext[2] = x1;
+                            checkNext[3] = y1;
+                        }
                     }
                     playBoard[x1, y1] = board[x1, y1];
                 }
@@ -311,8 +298,11 @@ namespace Minesweeper
                     if (board[x, y1] == 0)
                     {
                         playBoard[x, y1] = 0;
-                        checkNext[2] = x;
-                        checkNext[3] = y1;
+                        if (i == 0)
+                        {
+                            //checkNext[2] = x;
+                            //checkNext[3] = y1;
+                        }
                     }
                     playBoard[x, y1] = board[x, y1];
                 }
@@ -322,8 +312,11 @@ namespace Minesweeper
                     if (board[x2, y1] == 0)
                     {
                         playBoard[x2, y1] = 0;
-                        checkNext[4] = x2;
-                        checkNext[5] = y1;
+                        if (i == 0)
+                        {
+                            checkNext[4] = x2;
+                            checkNext[5] = y1;
+                        }
                     }
                     playBoard[x2, y1] = board[x2, y1];
                 }
@@ -333,8 +326,11 @@ namespace Minesweeper
                     if (board[x1, y] == 0)
                     {
                         playBoard[x1, y] = 0;
-                        checkNext[6] = x1;
-                        checkNext[7] = y;
+                        if (i == 0)
+                        {
+                            //checkNext[6] = x1;
+                            //checkNext[7] = y;
+                        }
                     }
                     playBoard[x1, y] = board[x1, y];
                 }
@@ -344,8 +340,11 @@ namespace Minesweeper
                     if (board[x2, y] == 0)
                     {
                         playBoard[x2, y] = 0;
-                        checkNext[8] = x2;
-                        checkNext[9] = y;
+                        if (i == 0)
+                        {
+                            //checkNext[6] = x2;
+                            //checkNext[7] = y;
+                        }
                     }
                     playBoard[x2, y] = board[x2, y];
                 }
@@ -355,8 +354,11 @@ namespace Minesweeper
                     if (board[x1, y2] == 0)
                     {
                         playBoard[x1, y2] = 0;
-                        checkNext[10] = x1;
-                        checkNext[11] = y2;
+                        if (i == 0)
+                        {
+                            checkNext[6] = x1;
+                            checkNext[7] = y2;
+                        }
                     }
                     playBoard[x1, y2] = board[x1, y2];
                 }
@@ -366,8 +368,11 @@ namespace Minesweeper
                     if (board[x, y2] == 0)
                     {
                         playBoard[x, y2] = 0;
-                        checkNext[12] = x;
-                        checkNext[13] = y2;
+                        if (i == 0)
+                        {
+                            //checkNext[8] = x;
+                            //checkNext[9] = y2;
+                        }
                     }
                     playBoard[x, y2] = board[x, y2];
                 }
@@ -377,17 +382,143 @@ namespace Minesweeper
                     if (board[x2, y2] == 0)
                     {
                         playBoard[x2, y2] = 0;
-                        checkNext[14] = x2;
-                        checkNext[15] = y2;
+                        if (i == 0)
+                        {
+                            checkNext[8] = x2;
+                            checkNext[9] = y2;
+                        }
+                    }
+                    playBoard[x2, y2] = board[x2, y2];
+                }
+            }
+        }
+        static void ChainZeros(int[,] board, int x, int y, int[,] playBoard, int size)
+        {
+            int[] checkNext = { x, y };
+
+            for (int i = 0; i < 9; i++)
+            {
+                int x1 = x - 1;
+                int y1 = y - 1;
+                int x2 = x + 1;
+                int y2 = y + 1;
+
+                if (x1 > -1 && y1 > -1)
+                {
+                    if (board[x1, y1] == 0)
+                    {
+                        playBoard[x1, y1] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[0] = x1;
+                            checkNext[1] = y1;
+                        }
+                    }
+                    playBoard[x1, y1] = board[x1, y1];
+                }
+
+                if (y1 > -1)
+                {
+                    if (board[x, y1] == 0)
+                    {
+                        playBoard[x, y1] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[2] = x;
+                            checkNext[3] = y1;
+                        }
+                    }
+                    playBoard[x, y1] = board[x, y1];
+                }
+
+                if (x2 < size && y1 > -1)
+                {
+                    if (board[x2, y1] == 0)
+                    {
+                        playBoard[x2, y1] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[4] = x2;
+                            checkNext[5] = y1;
+                        }
+                    }
+                    playBoard[x2, y1] = board[x2, y1];
+                }
+
+                if (x1 > -1)
+                {
+                    if (board[x1, y] == 0)
+                    {
+                        playBoard[x1, y] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[6] = x1;
+                            checkNext[7] = y;
+                        }
+                    }
+                    playBoard[x1, y] = board[x1, y];
+                }
+
+                if (x2 < size)
+                {
+                    if (board[x2, y] == 0)
+                    {
+                        playBoard[x2, y] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[8] = x2;
+                            checkNext[9] = y;
+                        }
+                    }
+                    playBoard[x2, y] = board[x2, y];
+                }
+
+                if (x1 > -1 && y2 < size)
+                {
+                    if (board[x1, y2] == 0)
+                    {
+                        playBoard[x1, y2] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[10] = x1;
+                            checkNext[11] = y2;
+                        }
+                    }
+                    playBoard[x1, y2] = board[x1, y2];
+                }
+
+                if (y2 < size)
+                {
+                    if (board[x, y2] == 0)
+                    {
+                        playBoard[x, y2] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[12] = x;
+                            checkNext[13] = y2;
+                        }
+                    }
+                    playBoard[x, y2] = board[x, y2];
+                }
+
+                if (x2 < size && y2 < size)
+                {
+                    if (board[x2, y2] == 0)
+                    {
+                        playBoard[x2, y2] = 0;
+                        if (i == 0)
+                        {
+                            checkNext[14] = x2;
+                            checkNext[15] = y2;
+                        }
                     }
                     playBoard[x2, y2] = board[x2, y2];
                 }
 
-                if (checkNext[0] != x || checkNext[1] != y)
-                {
-                    x = checkNext[16];
-                    y = checkNext[17];
-                }
+                if (i != 0)
+                    i += 2;
+                x = checkNext[i];
+                y = checkNext[i + 1];
             } 
         }
         static void EndGame(int flagged, int wrongFlag)
