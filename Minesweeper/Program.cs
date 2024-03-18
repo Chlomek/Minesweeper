@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,17 +17,17 @@ namespace Minesweeper
             int size = int.Parse(Console.ReadLine());
             Console.WriteLine("Enter the density of mines:");
             int mines = int.Parse(Console.ReadLine());
+            int mineCount, mistakes = 0;
             int[,] board = new int[size, size];
             int[,] playBoard = new int[size, size];
             int playerCordsX = 0, playerCordsY = 0;
 
-            GenerateMines(board, size, mines, playBoard);
+            GenerateMines(board, size, mines, playBoard, out mineCount);
             PrintBoard(board, size, playerCordsX, playerCordsY, playBoard);
-            Console.ReadLine();
-            Move(board, size, playerCordsX, playerCordsY, playBoard);
+            Move(board, size, playerCordsX, playerCordsY, playBoard, mineCount, mistakes);
         }
 
-        static void GenerateMines(int[,] board, int size, int mines, int[,] playBoard)
+        static void GenerateMines(int[,] board, int size, int mines, int[,] playBoard, out int mineCount)
         {
 
             for (int i = 0; i < size; i++)
@@ -38,7 +39,8 @@ namespace Minesweeper
                 }
             }
 
-            double mineCount = (size * size) * (mines / 100.0);
+            double totalMines = (size * size) * (mines / 100.0);
+            mineCount = Convert.ToInt16(totalMines);
             Random random = new Random();
             for (int i = 0; i < mineCount; i++)
             {
@@ -193,7 +195,7 @@ namespace Minesweeper
             }
             Console.WriteLine();
         }
-        static void Move(int[,] board, int size, int playerCordsX, int playerCordsY, int[,] playBoard)
+        static void Move(int[,] board, int size, int playerCordsX, int playerCordsY, int[,] playBoard, int mineCount, int mistakes)
         {
             int wrongFlag = 0, flagged = 0;
             int size1 = size - 1;
@@ -206,50 +208,60 @@ namespace Minesweeper
                         if (playerCordsX != 0)
                         {
                             playerCordsX -= 1;
-                            Console.WriteLine("up");
+                            //Console.WriteLine("up");
                         }
                         break;
                     case ConsoleKey.DownArrow:
                         if (playerCordsX != size1)
                         {
                             playerCordsX += 1;
-                            Console.WriteLine("down");
+                            //Console.WriteLine("down");
                         }
                         break;
                     case ConsoleKey.RightArrow:
                         if (playerCordsY != size1)
                         {
                             playerCordsY += 1;
-                            Console.WriteLine("right");
+                            //Console.WriteLine("right");
                         }
                         break;
                     case ConsoleKey.LeftArrow:
                         if (playerCordsY != 0)
                         {
                             playerCordsY -= 1;
-                            Console.WriteLine("left");
+                            //Console.WriteLine("left");
                         }
                         break;
                     case ConsoleKey.Spacebar:
-                        Console.WriteLine("space");
+                        //Console.WriteLine("space");
                         if (board[playerCordsX, playerCordsY] < 9)
                         {
                             if (playBoard[playerCordsX, playerCordsY] == 9)
                                 wrongFlag--;
                             playBoard[playerCordsX, playerCordsY] = board[playerCordsX, playerCordsY];
+                            WinGame(flagged, wrongFlag, mineCount, mistakes);
                             if (board[playerCordsX, playerCordsY] == 0)
                             {
                                 revealZeros(playerCordsX, playerCordsY, board, size, playBoard);
                             }
                         }
                         else
+                        {
                             EndGame(flagged, wrongFlag);
+                            mistakes++;
+                        }
+                            
                         break;
                     case ConsoleKey.Enter:
-                        Console.WriteLine("Enter");
-                        if (board[playerCordsX, playerCordsY] == 9)
+                        //Console.WriteLine("Enter");
+                        if (playBoard[playerCordsX, playerCordsY] == 9)
+                        {
+                            WinGame(flagged, wrongFlag, mineCount, mistakes);
+                        }
+                        else if (board[playerCordsX, playerCordsY] == 9)
                         {
                             flagged++;
+                            WinGame(flagged, wrongFlag, mineCount, mistakes);
                         }
                         else
                             wrongFlag++;
@@ -266,14 +278,14 @@ namespace Minesweeper
             checkNext[0] = x;
             checkNext[1] = y;
 
-            for (int i = 0; i < 10; i+=2)
+            for (int i = 0; i < 10; i += 2)
             {
                 if (i != 0)
                 {
                     x = checkNext[i];
                     y = checkNext[i + 1];
                 }
-                
+
                 int x1 = x - 1;
                 int y1 = y - 1;
                 int x2 = x + 1;
@@ -392,135 +404,6 @@ namespace Minesweeper
                 }
             }
         }
-        static void ChainZeros(int[,] board, int x, int y, int[,] playBoard, int size)
-        {
-            int[] checkNext = { x, y };
-
-            for (int i = 0; i < 9; i++)
-            {
-                int x1 = x - 1;
-                int y1 = y - 1;
-                int x2 = x + 1;
-                int y2 = y + 1;
-
-                if (x1 > -1 && y1 > -1)
-                {
-                    if (board[x1, y1] == 0)
-                    {
-                        playBoard[x1, y1] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[0] = x1;
-                            checkNext[1] = y1;
-                        }
-                    }
-                    playBoard[x1, y1] = board[x1, y1];
-                }
-
-                if (y1 > -1)
-                {
-                    if (board[x, y1] == 0)
-                    {
-                        playBoard[x, y1] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[2] = x;
-                            checkNext[3] = y1;
-                        }
-                    }
-                    playBoard[x, y1] = board[x, y1];
-                }
-
-                if (x2 < size && y1 > -1)
-                {
-                    if (board[x2, y1] == 0)
-                    {
-                        playBoard[x2, y1] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[4] = x2;
-                            checkNext[5] = y1;
-                        }
-                    }
-                    playBoard[x2, y1] = board[x2, y1];
-                }
-
-                if (x1 > -1)
-                {
-                    if (board[x1, y] == 0)
-                    {
-                        playBoard[x1, y] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[6] = x1;
-                            checkNext[7] = y;
-                        }
-                    }
-                    playBoard[x1, y] = board[x1, y];
-                }
-
-                if (x2 < size)
-                {
-                    if (board[x2, y] == 0)
-                    {
-                        playBoard[x2, y] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[8] = x2;
-                            checkNext[9] = y;
-                        }
-                    }
-                    playBoard[x2, y] = board[x2, y];
-                }
-
-                if (x1 > -1 && y2 < size)
-                {
-                    if (board[x1, y2] == 0)
-                    {
-                        playBoard[x1, y2] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[10] = x1;
-                            checkNext[11] = y2;
-                        }
-                    }
-                    playBoard[x1, y2] = board[x1, y2];
-                }
-
-                if (y2 < size)
-                {
-                    if (board[x, y2] == 0)
-                    {
-                        playBoard[x, y2] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[12] = x;
-                            checkNext[13] = y2;
-                        }
-                    }
-                    playBoard[x, y2] = board[x, y2];
-                }
-
-                if (x2 < size && y2 < size)
-                {
-                    if (board[x2, y2] == 0)
-                    {
-                        playBoard[x2, y2] = 0;
-                        if (i == 0)
-                        {
-                            checkNext[14] = x2;
-                            checkNext[15] = y2;
-                        }
-                    }
-                    playBoard[x2, y2] = board[x2, y2];
-                }
-
-                if (i != 0)
-                    i += 2;
-                x = checkNext[i];
-                y = checkNext[i + 1];
-            } 
-        }
         static void EndGame(int flagged, int wrongFlag)
         {
             Console.Clear();
@@ -529,6 +412,16 @@ namespace Minesweeper
             Console.WriteLine("Misplaced flags: " + wrongFlag);
             Console.ReadLine();
             return;
+        }
+        static void WinGame(int flagged, int wrongFlag, int mineCount, int mistakes)
+        {
+            if (mineCount == flagged && wrongFlag == 0)
+            {
+                Console.WriteLine("You Win!");
+                Console.WriteLine("mistakes: " + mistakes);
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
         }
     }
 }
